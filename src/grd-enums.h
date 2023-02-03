@@ -29,6 +29,13 @@ typedef enum
 
 typedef enum
 {
+  GRD_RDP_CURSOR_MODE_HIDDEN,
+  GRD_RDP_CURSOR_MODE_EMBEDDED,
+  GRD_RDP_CURSOR_MODE_METADATA,
+} GrdRdpCursorMode;
+
+typedef enum
+{
   GRD_VNC_AUTH_METHOD_PROMPT,
   GRD_VNC_AUTH_METHOD_PASSWORD
 } GrdVncAuthMethod;

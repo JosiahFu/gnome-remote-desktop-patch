@@ -139,6 +139,7 @@ struct _GrdSessionRdp
   GrdRdpSAMFile *sam_file;
   uint32_t rdp_error_info;
   GrdRdpScreenShareMode screen_share_mode;
+  GrdScreenCastCursorMode cursor_mode;
   gboolean session_should_stop;
 
   SessionMetrics session_metrics;
@@ -721,6 +722,24 @@ is_view_only (GrdSessionRdp *session_rdp)
   GrdSettings *settings = grd_context_get_settings (context);
 
   return grd_settings_get_rdp_view_only (settings);
+}
+
+static GrdScreenCastCursorMode
+get_screen_cast_cursor_mode (GrdSessionRdp *session_rdp)
+{
+  GrdContext *context = grd_session_get_context (GRD_SESSION (session_rdp));
+  GrdSettings *settings = grd_context_get_settings (context);
+
+  switch(grd_settings_get_rdp_cursor_mode(settings))
+    {
+    case GRD_RDP_CURSOR_MODE_HIDDEN:
+      return GRD_SCREEN_CAST_CURSOR_MODE_HIDDEN;
+    case GRD_RDP_CURSOR_MODE_EMBEDDED:
+      return GRD_SCREEN_CAST_CURSOR_MODE_EMBEDDED;
+    case GRD_RDP_CURSOR_MODE_METADATA:
+      return GRD_SCREEN_CAST_CURSOR_MODE_METADATA;
+    }
+  return GRD_SCREEN_CAST_CURSOR_MODE_METADATA;
 }
 
 static void
@@ -2271,6 +2290,7 @@ grd_session_rdp_new (GrdRdpServer      *rdp_server,
   session_rdp->hwaccel_nvidia = hwaccel_nvidia;
 
   session_rdp->screen_share_mode = grd_settings_get_rdp_screen_share_mode (settings);
+  session_rdp->cursor_mode = grd_settings_get_rdp_cursor_mode (settings);
 
   if (!init_rdp_session (session_rdp, username, password, &error))
     {
@@ -2527,7 +2547,7 @@ grd_session_rdp_remote_desktop_session_started (GrdSession *session)
   if (session_rdp->monitor_config->is_virtual)
     {
       grd_session_record_virtual (session,
-                                  GRD_SCREEN_CAST_CURSOR_MODE_METADATA,
+                                  get_screen_cast_cursor_mode(session_rdp),
                                   TRUE);
     }
   else
@@ -2536,7 +2556,7 @@ grd_session_rdp_remote_desktop_session_started (GrdSession *session)
 
       connector = session_rdp->monitor_config->connectors[0];
       grd_session_record_monitor (session, connector,
-                                  GRD_SCREEN_CAST_CURSOR_MODE_METADATA);
+                                  get_screen_cast_cursor_mode(session_rdp));
     }
 }
 

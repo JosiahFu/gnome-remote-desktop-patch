@@ -40,6 +40,7 @@ enum
   RDP_SERVER_CERT_CHANGED,
   RDP_SERVER_KEY_CHANGED,
   RDP_VIEW_ONLY_CHANGED,
+  RDP_CURSOR_MODE_CHANGED,
   VNC_ENABLED_CHANGED,
   VNC_VIEW_ONLY_CHANGED,
   VNC_AUTH_METHOD_CHANGED,
@@ -62,6 +63,7 @@ struct _GrdSettings
 
     gboolean is_enabled;
     GrdRdpScreenShareMode screen_share_mode;
+    GrdRdpCursorMode cursor_mode;
     char *server_cert;
     char *server_key;
     gboolean view_only;
@@ -115,6 +117,12 @@ GrdVncScreenShareMode
 grd_settings_get_vnc_screen_share_mode (GrdSettings *settings)
 {
   return settings->vnc.screen_share_mode;
+}
+
+GrdRdpCursorMode
+grd_settings_get_rdp_cursor_mode (GrdSettings *settings)
+{
+  return settings->rdp.cursor_mode;
 }
 
 char *
@@ -293,6 +301,13 @@ update_rdp_view_only (GrdSettings *settings)
 }
 
 static void
+update_rdp_cursor_mode (GrdSettings *settings)
+{
+  settings->rdp.cursor_mode = g_settings_get_enum (settings->rdp.settings,
+                                                    "cursor-mode");
+}
+
+static void
 update_vnc_enabled (GrdSettings *settings)
 {
   settings->vnc.is_enabled = g_settings_get_boolean (settings->vnc.settings,
@@ -342,6 +357,11 @@ on_rdp_settings_changed (GSettings   *rdp_settings,
     {
       update_rdp_view_only (settings);
       g_signal_emit (settings, signals[RDP_VIEW_ONLY_CHANGED], 0);
+    }
+  else if (strcmp (key, "cursor-mode") == 0)
+    {
+      update_rdp_cursor_mode (settings);
+      g_signal_emit (settings, signals[RDP_CURSOR_MODE_CHANGED], 0);
     }
 }
 
@@ -412,6 +432,7 @@ grd_settings_init (GrdSettings *settings)
   update_rdp_tls_cert (settings);
   update_rdp_tls_key (settings);
   update_rdp_view_only (settings);
+  update_rdp_cursor_mode(settings);
   update_vnc_enabled (settings);
   update_vnc_view_only (settings);
   update_vnc_auth_method (settings);
@@ -458,6 +479,13 @@ grd_settings_class_init (GrdSettingsClass *klass)
                   G_TYPE_NONE, 0);
   signals[RDP_VIEW_ONLY_CHANGED] =
     g_signal_new ("rdp-view-only-changed",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  0,
+                  NULL, NULL, NULL,
+                  G_TYPE_NONE, 0);
+  signals[RDP_VIEW_ONLY_CHANGED] =
+    g_signal_new ("rdp-cursor-mode-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
                   0,

@@ -60,6 +60,21 @@
         devices (e.g. mouse and keyboard).
       </description>
     </key>
+    <key name='cursor-mode' enum='org.gnome.desktop.remote-desktop.GrdRdpCursorMode'>
+      <default>'metadata'</default>
+      <summary>Method used to capture the cursor</summary>
+      <description>
+        Controls how the cursor is captured by Mutter to allow hiding the cursor, embedding the local 
+        cursor or sending data to enable a remote cursor.
+
+        When using screen-share-mode extend, setting cursor-mode to embedded allows the RDP client
+        to be used as a second monitor, with the local cursor visible.
+
+         * hidden   - cursor is not included in the stream
+         * embedded - cursor is included in the framebuffer
+         * metadata - cursor is included as metadata in the PipeWire stream
+      </description>
+    </key>
   </schema>
   <schema id='org.gnome.desktop.remote-desktop.vnc' path='/org/gnome/desktop/remote-desktop/vnc/'>
     <key name='enable' type='b'>

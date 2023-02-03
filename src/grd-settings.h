@@ -66,6 +66,8 @@ gboolean grd_settings_get_rdp_view_only (GrdSettings *settings);
 
 gboolean grd_settings_get_vnc_view_only (GrdSettings *settings);
 
+GrdRdpCursorMode grd_settings_get_rdp_cursor_mode (GrdSettings *settings);
+
 GrdVncAuthMethod grd_settings_get_vnc_auth_method (GrdSettings *settings);
 
 #endif /* GRD_SETTINGS_H */
