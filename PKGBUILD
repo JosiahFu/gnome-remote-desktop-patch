@@ -12,6 +12,8 @@ depends=(cairo libdrm libepoxy glib2 libnotify libsecret pipewire systemd
          tpm2-tss freerdp fuse3 libxkbcommon libfdk-aac libvncserver dconf)
 makedepends=(asciidoc git meson ffnvcodec-headers)
 checkdepends=(python-dbus python-gobject mutter wireplumber)
+provides=('gnome-remote-desktop=43.3-1')
+conflicts=('gnome-remote-desktop')
 groups=(gnome)
 _commit=7d6dc607cbe5cc4a2ac2b6848311f799405e9645  # tags/43.3^0
 source=("git+https://github.com/JosiahFu/gnome-remote-desktop-patch.git#commit=$_commit")
